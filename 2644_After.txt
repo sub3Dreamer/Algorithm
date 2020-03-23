@@ -1,0 +1,98 @@
+using System;
+using System.Collections.Generic;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        public class Pair
+        {
+            int _idx;
+            int _chonsu;
+
+            public int Idx
+            {
+                get
+                {
+                    return _idx;
+                }
+            }
+
+            public int Chonsu
+            {
+                get
+                {
+                    return _chonsu;
+                }
+            }
+
+            public Pair(int idx, int chonsu)
+            {
+                _idx = idx;
+                _chonsu = chonsu;
+            }
+        }
+
+        public static bool[,] _isChonsu;
+        public static bool[] _visited;
+
+        public static int _humanCnt;
+
+        static void Main(string[] args)
+        {
+            // 전체 사람의 수
+            string humanCntStr = Console.ReadLine();
+            _humanCnt = int.Parse(humanCntStr);
+
+            // 촌수를 계산해야 하는 서로 다른 두 사람의 번호
+            string[] compareNumStr = Console.ReadLine().Split(' ');
+            int human1 = int.Parse(compareNumStr[0]) - 1;
+            int human2 = int.Parse(compareNumStr[1]) - 1;
+
+            // 부모 자식 간 관계의 갯수
+            string relationCntStr = Console.ReadLine();
+            int relationCnt = int.Parse(relationCntStr);
+
+            _isChonsu = new bool[_humanCnt, _humanCnt];
+            _visited = new bool[_humanCnt];
+
+            // 부모 자식간의 관계를 나타내는 두 번호 x,y (관계의 갯수만큼 인풋 받음)
+            for (int i = 0; i < relationCnt; i++)
+            {
+                string[] inputNodeStr = Console.ReadLine().Split(' ');
+
+                int nodeParent = int.Parse(inputNodeStr[0]) - 1;
+                int nodeChild = int.Parse(inputNodeStr[1]) - 1;
+
+                _isChonsu[nodeChild, nodeParent] = true;
+                _isChonsu[nodeParent, nodeChild] = true;
+            }
+            int cousinsCount = Bfs(human1, human2);
+            Console.WriteLine(cousinsCount);
+        }
+
+        public static int Bfs(int human1, int human2)
+        {
+            Queue<Pair> pairQueue = new Queue<Pair>();
+            Pair pair = new Pair(human1, 0);
+            pairQueue.Enqueue(pair);
+
+            while(pairQueue.Count > 0)
+            {
+                Pair tmp = pairQueue.Dequeue();
+                if (tmp.Idx == human2)
+                    return tmp.Chonsu;
+                _visited[tmp.Idx] = true;
+                for(int i = 0; i < _humanCnt; i++)
+                {
+                    if (_visited[i]) continue;
+                    if (!_isChonsu[tmp.Idx, i]) continue;
+                    Pair np = new Pair(i, tmp.Chonsu + 1);
+                    pairQueue.Enqueue(np);
+                }
+            }
+            return -1;
+        }
+
+    }
+}
