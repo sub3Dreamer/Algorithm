@@ -41,23 +41,23 @@ namespace ConsoleApp1
             int humanCnt = int.Parse(humanCntStr);
 
             // 촌수를 계산해야 하는 서로 다른 두 사람의 번호
-            string compareNumStr = Console.ReadLine();
-            int human1 = (int)char.GetNumericValue(compareNumStr[0]);
-            int human2 = (int)char.GetNumericValue(compareNumStr[2]);
+            string[] compareNumStr = Console.ReadLine().Split(' ');
+            int human1 = int.Parse(compareNumStr[0]);
+            int human2 = int.Parse(compareNumStr[1]);
 
             // 부모 자식 간 관계의 갯수
             string relationCntStr = Console.ReadLine();
             int relationCnt = int.Parse(relationCntStr);
 
             // 부모 자식간의 관계를 나타내는 두 번호 x,y (관계의 갯수만큼 인풋 받음)
-            for(int i = 0; i < relationCnt; i++)
+            for (int i = 0; i < relationCnt; i++)
             {
-                string inputNodeStr = Console.ReadLine();
+                string[] inputNodeStr = Console.ReadLine().Split(' ');
 
-                int nodeParent = (int)char.GetNumericValue(inputNodeStr[0]);
-                int nodeChild = (int)char.GetNumericValue(inputNodeStr[2]);
+                int nodeParent = int.Parse(inputNodeStr[0]);
+                int nodeChild = int.Parse(inputNodeStr[1]);
 
-                if(nodeDic.ContainsKey(nodeParent))
+                if (nodeDic.ContainsKey(nodeParent))
                 {
                     nodeDic[nodeParent].Add(nodeChild);
                 }
