@@ -1,0 +1,119 @@
+using System;
+using System.Collections.Generic;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        public class NodeInfo
+        {
+            int _parent;
+            int _dist;
+
+            public int Parent
+            {
+                get
+                {
+                    return _parent;
+                }
+            }
+            public int Dist
+            {
+                get
+                {
+                    return _dist;
+                }
+            }
+
+            public NodeInfo(int parent, int dist)
+            {
+                _parent = parent;
+                _dist = dist;
+            }
+        }
+
+        public static Dictionary<int, List<int>> nodeDic = new Dictionary<int, List<int>>();
+
+        static void Main(string[] args)
+        {
+            // 전체 사람의 수
+            string humanCntStr = Console.ReadLine();
+            int humanCnt = int.Parse(humanCntStr);
+
+            // 촌수를 계산해야 하는 서로 다른 두 사람의 번호
+            string compareNumStr = Console.ReadLine();
+            int human1 = (int)char.GetNumericValue(compareNumStr[0]);
+            int human2 = (int)char.GetNumericValue(compareNumStr[2]);
+
+            // 부모 자식 간 관계의 갯수
+            string relationCntStr = Console.ReadLine();
+            int relationCnt = int.Parse(relationCntStr);
+
+            // 부모 자식간의 관계를 나타내는 두 번호 x,y (관계의 갯수만큼 인풋 받음)
+            for(int i = 0; i < relationCnt; i++)
+            {
+                string inputNodeStr = Console.ReadLine();
+
+                int nodeParent = (int)char.GetNumericValue(inputNodeStr[0]);
+                int nodeChild = (int)char.GetNumericValue(inputNodeStr[2]);
+
+                if(nodeDic.ContainsKey(nodeParent))
+                {
+                    nodeDic[nodeParent].Add(nodeChild);
+                }
+                else
+                {
+                    nodeDic.Add(nodeParent, new List<int>() { nodeChild });
+                }
+            }
+            int cousinsCount = CalculateToCousins(human1, human2);
+            Console.WriteLine(cousinsCount);
+        }
+
+        public static int CalculateToCousins(int human1, int human2)
+        {
+            List<NodeInfo> nodeInfo1 = new List<NodeInfo>();
+            nodeInfo1.Add(new NodeInfo(human1, 0));
+            AddNode(nodeInfo1, human1, 0);
+
+            List<NodeInfo> nodeInfo2 = new List<NodeInfo>();
+            nodeInfo2.Add(new NodeInfo(human2, 0));
+            AddNode(nodeInfo2, human2, 0);
+
+            for (int i = 0; i < nodeInfo1.Count; i++)
+            {
+                for (int j = 0; j < nodeInfo2.Count; j++)
+                {
+                    if (nodeInfo1[i].Parent == nodeInfo2[j].Parent)
+                    {
+                        return nodeInfo1[i].Dist + nodeInfo2[j].Dist;
+                    }
+                }
+            }
+
+            return -1;
+        }
+
+        public static void AddNode(List<NodeInfo> nodeInfo, int checkNode, int dist)
+        {
+            int parentNode = -1;
+
+            foreach (KeyValuePair<int, List<int>> pair in nodeDic)
+            {
+                for (int i = 0; i < pair.Value.Count; i++)
+                {
+                    if (checkNode == pair.Value[i])
+                    {
+                        parentNode = pair.Key;
+                        dist++;
+
+                        nodeInfo.Add(new NodeInfo(parentNode, dist));
+                    }
+                }
+            }
+
+            if (parentNode != -1)
+                AddNode(nodeInfo, parentNode, dist);
+        }
+    }
+}
