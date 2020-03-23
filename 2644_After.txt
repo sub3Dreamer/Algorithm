@@ -40,7 +40,7 @@ namespace ConsoleApp1
 
         static void Main(string[] args)
         {
-            // 전체 사람의 수
+            // 전체 사람의 수.
             string humanCntStr = Console.ReadLine();
             _humanCnt = int.Parse(humanCntStr);
 
