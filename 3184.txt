@@ -1,0 +1,118 @@
+using System;
+using System.Collections.Generic;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        public static string[,] _matrix;
+        public static bool[,] _visited;
+        public static int _matrixRow;
+        public static int _matrixColumn;
+        public static int _totalSheep;
+        public static int _totalWolf;
+
+        static void Main(string[] args)
+        {
+            string[] matrixData = Console.ReadLine().Split(' ');
+
+            _matrixRow = int.Parse(matrixData[0]);
+            _matrixColumn = int.Parse(matrixData[1]);
+
+            _matrix = new string[_matrixRow, _matrixColumn];
+            _visited = new bool[_matrixRow, _matrixColumn];
+
+            for(int i = 0; i < _matrixRow; i++)
+            {
+                string inputColumn = Console.ReadLine();
+                for(int j = 0; j < _matrixColumn; j++)
+                {
+                    _matrix[i, j] = inputColumn[j].ToString();
+                }
+            }
+
+            FindSheepAndWolf();
+
+            Console.WriteLine($"{_totalSheep} {_totalWolf}");
+        }
+
+        public static void FindSheepAndWolf()
+        {
+            for(int i = 0; i < _matrixRow; i++)
+            {
+                for(int j = 0; j < _matrixColumn; j++)
+                {
+                    if (_matrix[i, j] == "#") continue;
+                    if (_visited[i, j]) continue;
+                    Bfs(i, j);
+                }
+            }
+        }
+
+        // 상하좌우?
+        public static int[] _directRow = { -1, 1, 0, 0 };
+        public static int[] _directColumn = { 0, 0, -1, 1 };
+        public static void Bfs(int row, int column)
+        {
+            Queue<Tile> tileQueue = new Queue<Tile>();
+            tileQueue.Enqueue(new Tile(row, column));
+
+            int sheepCount = 0;
+            int wolfCount = 0;
+
+            while(tileQueue.Count > 0)
+            {
+                Tile tile = tileQueue.Dequeue();
+
+                if (_matrix[tile.Row, tile.Column] == "v") ++wolfCount;
+                if (_matrix[tile.Row, tile.Column] == "o") ++sheepCount;
+                _visited[tile.Row, tile.Column] = true;
+
+                for(int i = 0; i < 4; i++)
+                {
+                    int nextRow = tile.Row + _directRow[i];
+                    int nextColumn = tile.Column + _directColumn[i];
+
+                    if (nextRow < 0 || nextRow >= _matrixRow || nextColumn < 0 || nextColumn >= _matrixColumn) continue;
+                    if (_matrix[nextRow, nextColumn] == "#") continue;
+                    if (_visited[nextRow, nextColumn]) continue;
+                    _visited[nextRow, nextColumn] = true;
+                    tileQueue.Enqueue(new Tile(nextRow, nextColumn));
+                }
+            }
+            if (wolfCount < sheepCount)
+                _totalSheep += sheepCount;
+            else
+                _totalWolf += wolfCount;
+        }
+
+        public class Tile
+        {
+            int _row; 
+            int _column;
+
+            #region Property
+            public int Row
+            {
+                get
+                {
+                    return _row;
+                }
+            }
+            public int Column
+            {
+                get
+                {
+                    return _column;
+                }
+            }
+            #endregion
+
+            public Tile(int row, int column)
+            {
+                _row = row;
+                _column = column;
+            }
+        }
+    }
+}
