@@ -44,7 +44,7 @@ namespace ConsoleApp1
             string humanCntStr = Console.ReadLine();
             _humanCnt = int.Parse(humanCntStr);
 
-            // 촌수를 계산해야 하는 서로 다른 두 사람의 번호.
+            // 촌수를 계산해야 하는 서로 다른 두 사람의 번호
             string[] compareNumStr = Console.ReadLine().Split(' ');
             int human1 = int.Parse(compareNumStr[0]) - 1;
             int human2 = int.Parse(compareNumStr[1]) - 1;
