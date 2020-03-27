@@ -1,0 +1,124 @@
+using System;
+using System.Collections.Generic;
+
+namespace boj2606
+{
+    class Program
+    {
+        public class Node
+        {
+            int _nodeIndex;
+            List<int> _childNodeList = new List<int>();
+
+            #region Property
+            public int NodeIndex
+            {
+                get
+                {
+                    return _nodeIndex;
+                }
+            }
+
+            public List<int> ChildNodes
+            {
+                get
+                {
+                    return _childNodeList;
+                }
+            }
+            #endregion
+
+            public Node()
+            {
+
+            }
+
+            public Node(int nodeIndex)
+            {
+                _nodeIndex = nodeIndex;
+            }
+
+            public void AddChild(int childNode)
+            {
+                _childNodeList.Add(childNode);
+            }
+        }
+
+        static int _totalNodeCnt;
+        static int _totalEdgeCnt;
+
+        // 감염 노드
+        static int _infectNodeCnt;
+
+        static Dictionary<int, Node> _nodeDic = new Dictionary<int, Node>();
+
+        static bool[] _visited;
+
+        static void Main(string[] args)
+        {
+            _totalNodeCnt = int.Parse(Console.ReadLine());
+            _totalEdgeCnt = int.Parse(Console.ReadLine());
+            _infectNodeCnt = 0;
+
+            _nodeDic.Clear();
+            _visited = new bool[101];
+
+            for(int i = 0; i < _totalEdgeCnt; i++)
+            {
+                string[] inputNode = Console.ReadLine().Split(' ');
+
+                int node1 = int.Parse(inputNode[0]);
+                int node2 = int.Parse(inputNode[1]);
+
+                if (_nodeDic.ContainsKey(node1))
+                {
+                    _nodeDic[node1].AddChild(node2);
+                    
+                }
+                else
+                {
+                    Node parentNode = new Node(node1);
+                    parentNode.AddChild(node2);
+                    _nodeDic.Add(node1, parentNode);
+                }
+                
+                if(_nodeDic.ContainsKey(node2))
+                {
+                    _nodeDic[node2].AddChild(node1);
+                }
+                else
+                {
+                    Node parentNode = new Node(node2);
+                    parentNode.AddChild(node1);
+                    _nodeDic.Add(node2, parentNode);
+                }
+            }
+
+            // 감염을 시작한 인덱스 방문처리.
+            int startNodeIndex = 1;
+            _visited[startNodeIndex] = true;
+
+            Dfs(startNodeIndex);
+            Console.WriteLine(_infectNodeCnt);
+        }
+
+        public static void Dfs(int nodeIndex)
+        {
+            if (_nodeDic.ContainsKey(nodeIndex) == false)
+                return;
+
+            Node node = _nodeDic[nodeIndex];
+
+            for (int i = 0; i < node.ChildNodes.Count; i++)
+            {
+                var childNode = node.ChildNodes[i];
+
+                if (_visited[childNode]) continue;
+                _visited[childNode] = true;
+
+                Dfs(childNode);
+                _infectNodeCnt++;
+            }
+        }
+    }
+}
