@@ -1,0 +1,90 @@
+using System;
+using System.Collections.Generic;
+
+namespace boj2606
+{
+    class Program
+    {
+        const int MAX_COMPUTER_COUNT = 100;
+
+        static bool[,] _nodeMatrix;
+        static bool[] _visited;
+
+        static int _totalNodeCnt;
+        static int _totalEdgeCnt;
+
+        // 감염 노드
+        static int _infectNodeCnt;
+
+        static void Main(string[] args)
+        {
+            _totalNodeCnt = int.Parse(Console.ReadLine());
+            _totalEdgeCnt = int.Parse(Console.ReadLine());
+            _infectNodeCnt = 0;
+
+            _nodeMatrix = new bool[MAX_COMPUTER_COUNT, MAX_COMPUTER_COUNT];
+            _visited = new bool[MAX_COMPUTER_COUNT];
+
+            for(int i = 0; i < _totalEdgeCnt; i++)
+            {
+                string[] inputNode = Console.ReadLine().Split(' ');
+
+                int node1 = int.Parse(inputNode[0]) - 1;
+                int node2 = int.Parse(inputNode[1]) - 1;
+
+                _nodeMatrix[node1,node2] = true;
+                _nodeMatrix[node2,node1] = true;
+            }
+
+            int startNode = 0;
+
+            // BFS -------------- 208ms
+            //Bfs(startNode);
+            // ------------------
+
+            // DFS -------------- 192ms
+            // 탐색을 시작하는 노드는 미리 방문처리함
+            _visited[startNode] = true;
+            Dfs(startNode);
+            // ------------------
+
+            Console.WriteLine(_infectNodeCnt);
+        }
+
+        public static void Bfs(int startNode)
+        {
+            Queue<int> nodeQueue = new Queue<int>();
+            
+            nodeQueue.Enqueue(startNode);
+            _visited[startNode] = true;
+
+            while (nodeQueue.Count > 0)
+            {
+                int nodeIdx = nodeQueue.Dequeue();
+
+                for(int i = 0; i < MAX_COMPUTER_COUNT; i++)
+                {
+                    if (_nodeMatrix[nodeIdx, i] == false) continue;
+                    if (_visited[i]) continue;
+
+                    _visited[i] = true;
+                    nodeQueue.Enqueue(i);
+                    _infectNodeCnt++;
+                }
+            }
+        }
+
+        public static void Dfs(int startNode)
+        {
+            for (int i = 0; i < MAX_COMPUTER_COUNT; i++)
+            {
+                if (_nodeMatrix[startNode, i] == false) continue;
+                if (_visited[i]) continue;
+
+                _visited[i] = true;
+                Dfs(i);
+                _infectNodeCnt++;
+            }
+        }
+    }
+}
