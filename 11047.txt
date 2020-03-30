@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+
+namespace boj11047
+{
+    class Program
+    {
+        static int _insertCoinCnt;
+        static int _price;
+        static int _needCoinCnt;
+
+        static List<int> _coinList = new List<int>();
+
+        static void Main(string[] args)
+        {
+            string[] inputCoin = Console.ReadLine().Split(' ');
+            _insertCoinCnt = int.Parse(inputCoin[0]);
+            _price = int.Parse(inputCoin[1]);
+
+            for(int i = 0; i < _insertCoinCnt; i++)
+            {
+                int coin = int.Parse(Console.ReadLine());
+                _coinList.Add(coin);
+            }
+
+            for(int i = _coinList.Count - 1; i >= 0; i--)
+            {
+                int coin = _coinList[i];
+                if (coin > _price)
+                    continue;
+
+                _needCoinCnt += _price / coin;
+                _price = _price % coin;
+            }
+
+            Console.WriteLine(_needCoinCnt);
+        }
+    }
+}
