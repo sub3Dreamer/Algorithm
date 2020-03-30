@@ -1,0 +1,53 @@
+using System;
+
+namespace boj11399
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int humanCnt = int.Parse(Console.ReadLine());
+
+            string[] inputTimeArray = Console.ReadLine().Split(' ');
+
+            int[] timeArray = new int[humanCnt];
+            for(int i = 0; i < humanCnt; i++)
+            {
+                timeArray[i] = int.Parse(inputTimeArray[i]);
+            }
+
+            int minTime = 0;
+
+            for(int i = 0; i < timeArray.Length; i++)
+            {
+                int min = 9999;
+                int minIndex = i;
+                for(int j = i; j < timeArray.Length; j++)
+                {
+                    if (min > timeArray[j])
+                    {
+                        min = timeArray[j];
+                        minIndex = j;
+                    }
+                }
+
+                if(min < timeArray[i])
+                {
+                    int temp = timeArray[i];
+                    timeArray[i] = min;
+                    timeArray[minIndex] = temp;
+                }
+            }
+
+            for(int i = 0; i < timeArray.Length; i++)
+            {
+                for (int j = 0; j <= i; j++)
+                {
+                    minTime += timeArray[j];
+                }
+            }
+
+            Console.WriteLine(minTime);
+        }
+    }
+}
