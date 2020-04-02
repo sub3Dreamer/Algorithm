@@ -10,73 +10,23 @@ namespace boj1120
             string compare1 = inputStr[0];
             string compare2 = inputStr[1];
 
-            int checkCnt = 0;
-            if(compare1.Length < compare2.Length)
-            {
-                checkCnt = GetConvertCheckCnt(compare1, compare2);
-            }
-            else if(compare1.Length == compare2.Length)
-            {
-                // 차이 계산
-                checkCnt = GetCheckCnt(compare1, compare2);
-            }
-            else
-            {
-                // 예외 발생
-            }
-
-            Console.WriteLine(checkCnt);
-        }
-
-        public static int GetConvertCheckCnt(string compare1, string compare2)
-        {
+            int result = 9999;
             int gapLength = compare2.Length - compare1.Length;
 
-            int minPartCheckStartIndex = 0;
-            int minPartCheckCnt = 9999;
-            for(int i = 0; i < gapLength + 1; i++)
+            for(int i = 0; i <= gapLength; i++)
             {
-                string partCompare2 = compare2.Substring(i, compare1.Length);
-                int partCheckCnt = GetCheckCnt(compare1, partCompare2);
-
-                if (partCheckCnt < minPartCheckCnt)
+                int checkCnt = 0;
+                for(int j = 0; j < compare1.Length; j++)
                 {
-                    minPartCheckStartIndex = i;
-                    minPartCheckCnt = partCheckCnt;
+                    if (compare1[j].Equals(compare2[j + i]) == false)
+                        checkCnt++;
                 }
+
+                if (checkCnt < result)
+                    result = checkCnt;
             }
 
-            // 컨버팅을 한다.
-            // start가 0보다 크면 start 앞 인덱스에 문자열 넣는다
-            // start + Length가 Length - 1보다 작으면 뒤에 문자열 넣는다
-
-            string convertCompare1;
-            if(minPartCheckStartIndex > 0)
-            {
-                convertCompare1 = compare2.Substring(0, minPartCheckStartIndex) + compare1;
-            }
-            else
-            {
-                convertCompare1 = compare1;
-            }
-
-            if(convertCompare1.Length < compare2.Length)
-            {
-                convertCompare1 = convertCompare1 + compare2.Substring(convertCompare1.Length, compare2.Length - convertCompare1.Length);
-            }
-            
-            return GetCheckCnt(convertCompare1, compare2);
-        }
-
-        public static int GetCheckCnt(string compare1, string compare2)
-        {
-            int checkCnt = 0;
-            for (int i = 0; i < compare1.Length; i++)
-            {
-                if (compare1[i].Equals(compare2[i]) == false)
-                    checkCnt++;
-            }
-            return checkCnt;
+            Console.WriteLine(result);
         }
     }
 }
