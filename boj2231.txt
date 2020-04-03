@@ -1,0 +1,40 @@
+using System;
+
+namespace boj2231
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+			int inputNum = int.Parse(Console.ReadLine());
+
+			int result = 0;
+			for (int i = 1; i <= inputNum; i++)
+			{
+				int constructor = i;
+				int divideSum = i;
+				int divideNum = i;
+
+				// 100만
+				for (int j = 6; j >= 0; j--)
+				{
+					divideSum += divideNum / (int)MathF.Pow(10, j);
+					divideNum = divideNum % (int)MathF.Pow(10, j);
+				}
+
+				if (divideSum == inputNum)
+				{
+					if (result == 0)
+						result = constructor;
+					else
+					{
+						if (result > constructor)
+							result = constructor;
+					}
+				}
+			}
+
+			Console.WriteLine(result);
+		}
+    }
+}
