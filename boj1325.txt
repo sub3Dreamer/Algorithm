@@ -1,0 +1,95 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace boj1325
+{
+    class Program
+    {
+        static int _maxNum;
+        static int _nodeCnt;
+
+        static Dictionary<int, List<int>> _nodeDependencyDic = new Dictionary<int, List<int>>();
+
+        static int[] _dist;
+
+        static void Main(string[] args)
+        {
+            string[] inputConst = Console.ReadLine().Split(' ');
+
+            _maxNum = int.Parse(inputConst[0]);
+            _nodeCnt = int.Parse(inputConst[1]);
+
+            _dist = new int[_maxNum];
+
+            for(int i = 0; i < _nodeCnt; i++)
+            {
+                string[] inputNode = Console.ReadLine().Split(' ');
+
+                int rootNode = int.Parse(inputNode[0]) - 1;
+                int dependencyNode = int.Parse(inputNode[1]) - 1;
+
+                if (_nodeDependencyDic.ContainsKey(dependencyNode))
+                    _nodeDependencyDic[dependencyNode].Add(rootNode);
+                else
+                    _nodeDependencyDic.Add(dependencyNode, new List<int>() { rootNode });
+            }
+
+            int maxDist = 0;
+
+            foreach(KeyValuePair<int, List<int>> nodeDependency in _nodeDependencyDic)
+            {
+                int nodeIdx = nodeDependency.Key;
+
+                _dist[nodeIdx] = GetMaxDistance(nodeIdx, 1);
+
+                if (_dist[nodeIdx] > maxDist)
+                    maxDist = _dist[nodeIdx];
+            }
+
+            List<int> resultList = new List<int>();
+            for(int i = 0; i < _dist.Length; i++)
+            {
+                if(_dist[i] == maxDist)
+                {
+                    resultList.Add(_dist[i]);
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < resultList.Count; i++)
+            {
+                sb.Append((resultList[i] + 1).ToString());
+
+                if (i < resultList.Count - 1)
+                    sb.Append(" ");
+            }
+
+            Console.WriteLine(sb.ToString());
+        }
+
+        static int GetMaxDistance(int inputNum, int dist)
+        {
+            if (_nodeDependencyDic.ContainsKey(inputNum) == false)
+                return 0;
+
+            int maxDistance = 0;
+
+            foreach (KeyValuePair<int, List<int>> nodeDependency in _nodeDependencyDic)
+            {
+                int nodeIdx = nodeDependency.Key;
+                var dependencyNodeList = nodeDependency.Value;
+
+                for (int i = 0; i < dependencyNodeList.Count; i++)
+                {
+                    int nodeDist = GetMaxDistance(dependencyNodeList[i], dist);
+
+                    if (nodeDist > maxDistance)
+                        maxDistance = nodeDist;
+                }
+            }
+
+            return dist + maxDistance;
+        }
+    }
+}
