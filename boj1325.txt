@@ -11,7 +11,8 @@ namespace boj1325
 
         static Dictionary<int, List<int>> _nodeDependencyDic = new Dictionary<int, List<int>>();
 
-        static int[] _dist;
+        static int _maxDist;
+        static int[] _nodeMaxDist;
 
         static void Main(string[] args)
         {
@@ -20,14 +21,14 @@ namespace boj1325
             _maxNum = int.Parse(inputConst[0]);
             _nodeCnt = int.Parse(inputConst[1]);
 
-            _dist = new int[_maxNum];
+            _nodeMaxDist = new int[_maxNum];
 
             for(int i = 0; i < _nodeCnt; i++)
             {
                 string[] inputNode = Console.ReadLine().Split(' ');
 
-                int rootNode = int.Parse(inputNode[0]) - 1;
-                int dependencyNode = int.Parse(inputNode[1]) - 1;
+                int rootNode = int.Parse(inputNode[0]);
+                int dependencyNode = int.Parse(inputNode[1]);
 
                 if (_nodeDependencyDic.ContainsKey(dependencyNode))
                     _nodeDependencyDic[dependencyNode].Add(rootNode);
@@ -35,31 +36,38 @@ namespace boj1325
                     _nodeDependencyDic.Add(dependencyNode, new List<int>() { rootNode });
             }
 
-            int maxDist = 0;
-
             foreach(KeyValuePair<int, List<int>> nodeDependency in _nodeDependencyDic)
             {
                 int nodeIdx = nodeDependency.Key;
 
-                _dist[nodeIdx] = GetMaxDistance(nodeIdx, 1);
+                GetMaxDistance(nodeIdx, nodeIdx, 1);
 
-                if (_dist[nodeIdx] > maxDist)
-                    maxDist = _dist[nodeIdx];
+                // 노드 인덱스에 담긴 거리값을 비교해서 제일 긴거를 max로 설정
+                var nodeDistList = _nodeDistDic[nodeIdx];
+
+                // 오름차순 정렬
+                nodeDistList.Sort();
+                var maxDistance = nodeDistList[nodeDistList.Count - 1];
+
+                if (maxDistance > _maxDist)
+                    _maxDist = maxDistance;
+
+                _nodeMaxDist[nodeIdx] = maxDistance;
             }
 
             List<int> resultList = new List<int>();
-            for(int i = 0; i < _dist.Length; i++)
+            for(int i = 0; i < _nodeMaxDist.Length; i++)
             {
-                if(_dist[i] == maxDist)
+                if(_nodeMaxDist[i] == _maxDist)
                 {
-                    resultList.Add(_dist[i]);
+                    resultList.Add(i);
                 }
             }
 
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < resultList.Count; i++)
             {
-                sb.Append((resultList[i] + 1).ToString());
+                sb.Append((resultList[i]).ToString());
 
                 if (i < resultList.Count - 1)
                     sb.Append(" ");
@@ -68,28 +76,37 @@ namespace boj1325
             Console.WriteLine(sb.ToString());
         }
 
-        static int GetMaxDistance(int inputNum, int dist)
+        static Dictionary<int, List<int>> _nodeDistDic = new Dictionary<int, List<int>>();
+
+        static void GetMaxDistance(int rootNode, int checkNode, int dist)
         {
-            if (_nodeDependencyDic.ContainsKey(inputNum) == false)
-                return 0;
-
-            int maxDistance = 0;
-
-            foreach (KeyValuePair<int, List<int>> nodeDependency in _nodeDependencyDic)
+            if(_nodeDependencyDic[checkNode].Count > 0)
             {
-                int nodeIdx = nodeDependency.Key;
-                var dependencyNodeList = nodeDependency.Value;
-
-                for (int i = 0; i < dependencyNodeList.Count; i++)
+                for(int i = 0; i < _nodeDependencyDic[checkNode].Count; i++)
                 {
-                    int nodeDist = GetMaxDistance(dependencyNodeList[i], dist);
+                    var childNode = _nodeDependencyDic[checkNode][i];
 
-                    if (nodeDist > maxDistance)
-                        maxDistance = nodeDist;
+                    if(_nodeDependencyDic.ContainsKey(childNode))
+                    {
+                        GetMaxDistance(rootNode, childNode, ++dist);
+                    }
+                    // 자식이 더이상 없으면 그 거리를 캐싱함
+                    else
+                    {
+                        if(_nodeDistDic.ContainsKey(rootNode))
+                            _nodeDistDic[rootNode].Add(dist);
+                        else
+                            _nodeDistDic.Add(rootNode, new List<int>() { dist });
+                    }
                 }
             }
-
-            return dist + maxDistance;
+            else
+            {
+                if (_nodeDistDic.ContainsKey(rootNode))
+                    _nodeDistDic[rootNode].Add(dist);
+                else
+                    _nodeDistDic.Add(rootNode, new List<int>() { dist });
+            }
         }
     }
 }
