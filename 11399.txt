@@ -1,0 +1,35 @@
+using System;
+using System.Collections.Generic;
+
+namespace boj11399
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int humanCnt = int.Parse(Console.ReadLine());
+
+            string[] inputTimeArray = Console.ReadLine().Split(' ');
+
+            List<int> timeList = new List<int>();
+            for(int i = 0; i < humanCnt; i++)
+            {
+                timeList.Add(int.Parse(inputTimeArray[i]));
+            }
+
+            int minTime = 0;
+
+            timeList.Sort();
+
+            for(int i = 0; i < timeList.Count; i++)
+            {
+                for (int j = 0; j <= i; j++)
+                {
+                    minTime += timeList[j];
+                }
+            }
+
+            Console.WriteLine(minTime);
+        }
+    }
+}

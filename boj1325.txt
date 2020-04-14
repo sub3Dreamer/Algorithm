@@ -1,0 +1,112 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace boj1325
+{
+    class Program
+    {
+        static int _maxNum;
+        static int _nodeCnt;
+
+        static Dictionary<int, List<int>> _nodeDependencyDic = new Dictionary<int, List<int>>();
+
+        static int _maxDist;
+        static int[] _nodeMaxDist;
+
+        static void Main(string[] args)
+        {
+            string[] inputConst = Console.ReadLine().Split(' ');
+
+            _maxNum = int.Parse(inputConst[0]);
+            _nodeCnt = int.Parse(inputConst[1]);
+
+            _nodeMaxDist = new int[_maxNum];
+
+            for(int i = 0; i < _nodeCnt; i++)
+            {
+                string[] inputNode = Console.ReadLine().Split(' ');
+
+                int rootNode = int.Parse(inputNode[0]);
+                int dependencyNode = int.Parse(inputNode[1]);
+
+                if (_nodeDependencyDic.ContainsKey(dependencyNode))
+                    _nodeDependencyDic[dependencyNode].Add(rootNode);
+                else
+                    _nodeDependencyDic.Add(dependencyNode, new List<int>() { rootNode });
+            }
+
+            foreach(KeyValuePair<int, List<int>> nodeDependency in _nodeDependencyDic)
+            {
+                int nodeIdx = nodeDependency.Key;
+
+                GetMaxDistance(nodeIdx, nodeIdx, 1);
+
+                // 노드 인덱스에 담긴 거리값을 비교해서 제일 긴거를 max로 설정
+                var nodeDistList = _nodeDistDic[nodeIdx];
+
+                // 오름차순 정렬
+                nodeDistList.Sort();
+                var maxDistance = nodeDistList[nodeDistList.Count - 1];
+
+                if (maxDistance > _maxDist)
+                    _maxDist = maxDistance;
+
+                _nodeMaxDist[nodeIdx] = maxDistance;
+            }
+
+            List<int> resultList = new List<int>();
+            for(int i = 0; i < _nodeMaxDist.Length; i++)
+            {
+                if(_nodeMaxDist[i] == _maxDist)
+                {
+                    resultList.Add(i);
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < resultList.Count; i++)
+            {
+                sb.Append((resultList[i]).ToString());
+
+                if (i < resultList.Count - 1)
+                    sb.Append(" ");
+            }
+
+            Console.WriteLine(sb.ToString());
+        }
+
+        static Dictionary<int, List<int>> _nodeDistDic = new Dictionary<int, List<int>>();
+
+        static void GetMaxDistance(int rootNode, int checkNode, int dist)
+        {
+            if(_nodeDependencyDic[checkNode].Count > 0)
+            {
+                for(int i = 0; i < _nodeDependencyDic[checkNode].Count; i++)
+                {
+                    var childNode = _nodeDependencyDic[checkNode][i];
+
+                    if(_nodeDependencyDic.ContainsKey(childNode))
+                    {
+                        GetMaxDistance(rootNode, childNode, ++dist);
+                    }
+                    // 자식이 더이상 없으면 그 거리를 캐싱함
+                    else
+                    {
+                        if(_nodeDistDic.ContainsKey(rootNode))
+                            _nodeDistDic[rootNode].Add(dist);
+                        else
+                            _nodeDistDic.Add(rootNode, new List<int>() { dist });
+                    }
+                }
+            }
+            else
+            {
+                if (_nodeDistDic.ContainsKey(rootNode))
+                    _nodeDistDic[rootNode].Add(dist);
+                else
+                    _nodeDistDic.Add(rootNode, new List<int>() { dist });
+            }
+        }
+    }
+}
