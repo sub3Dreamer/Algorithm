@@ -1,0 +1,62 @@
+using System;
+
+namespace Greedy
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int gate = int.Parse(Console.ReadLine());
+            int airplane = int.Parse(Console.ReadLine());
+
+            int[] gates = new int[gate + 1];
+            for(int i = 1; i <= gate; i++)
+            {
+                gates[i] = i;
+            }
+
+            int[] gateNums = new int[airplane];
+            for(int i = 0; i < airplane; i++)
+            {
+                int gateNum = int.Parse(Console.ReadLine());
+                gateNums[i] = gateNum;
+            }
+
+            int cnt = 0;
+            for (int i = 0; i < gateNums.Length; i++)
+            {
+                int gateNum = gateNums[i];
+                int emptyGate = Find(gateNum, gates);
+                if (emptyGate == 0)
+                {
+                    break;
+                }
+                cnt++;
+                Union(emptyGate, emptyGate - 1, gates);
+            }
+
+            Console.WriteLine(cnt);
+        }
+        
+        public static int Find(int gateNum, int[] gates)
+        {
+            if(gateNum == gates[gateNum])
+            {
+                return gateNum;
+            }
+
+            return gates[gateNum] = Find(gates[gateNum], gates);
+        }
+
+        public static void Union(int gateNum1, int gateNum2, int[] gates)
+        {
+            gateNum1 = Find(gateNum1, gates);
+            gateNum2 = Find(gateNum2, gates);
+
+            if(gateNum1 != gateNum2)
+            {
+                gates[gateNum1] = gateNum2;
+            }
+        }
+    }
+}
