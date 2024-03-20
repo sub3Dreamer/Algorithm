@@ -1,0 +1,34 @@
+using System;
+
+namespace Greedy
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int cost = int.Parse(Console.ReadLine());
+
+            int change = 1000 - cost;
+
+            int[] charges = new int[6]
+            {
+                500, 100, 50, 10, 5, 1
+            };
+
+            int coinCnt = 0;
+            for(int i = 0; i < charges.Length; i++)
+            {
+                var charge = charges[i];
+                coinCnt += change / charge;
+                change = change % charge;
+
+                if(change == 0)
+                {
+                    break;
+                }
+            }
+
+            Console.WriteLine(coinCnt);
+        }
+    }
+}
