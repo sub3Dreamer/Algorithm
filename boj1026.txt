@@ -1,0 +1,26 @@
+using System;
+using System.Linq;
+
+namespace Greedy
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int num = int.Parse(Console.ReadLine());
+            int[] listA = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+            int[] listB = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+
+            Array.Sort(listA);
+            Array.Sort(listB, (x, y) => y.CompareTo(x));
+
+            int sum = 0;
+            for (int i = 0; i < num; i++)
+            {
+                sum += listA[i] * listB[i];
+            }
+
+            Console.WriteLine(sum);
+        }
+    }
+}
