@@ -1,0 +1,46 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Greedy
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int roomCnt = int.Parse(Console.ReadLine());
+
+            List<(int, int)> rooms = new List<(int, int)>();
+            for(int i = 0; i < roomCnt; i++) 
+            {
+                var roomNos = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+                rooms.Add((roomNos[0], roomNos[1]));
+            }
+
+            // end값 기준 오름차순으로 정렬
+            rooms.Sort((x, y) => 
+            {
+                if(x.Item2 == y.Item2)
+                {
+                    return x.Item1 - y.Item1;
+                }
+                return x.Item2 - y.Item2;
+            });
+
+            int useCount = 1;
+            int currentEnd = rooms[0].Item2;
+
+            for(int i = 1; i < rooms.Count; i++)
+            {
+                // 루프의 start값이 이전에 탐색했던 end값보다 작은 경우를 가지치기
+                if (rooms[i].Item1 >= currentEnd)
+                {
+                    currentEnd = rooms[i].Item2;
+                    useCount++;
+                }
+            }
+
+            Console.WriteLine(useCount);
+        }
+    }
+}
