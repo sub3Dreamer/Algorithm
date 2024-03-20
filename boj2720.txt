@@ -1,0 +1,41 @@
+using System;
+
+namespace Greedy
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int num = int.Parse(Console.ReadLine());
+
+            int[] costs = new int[num];
+            for(int i = 0; i < num; i++)
+            {
+                costs[i] = int.Parse(Console.ReadLine());
+            }
+
+            // 쿼터, 다임, 니켈, 페니의 개수
+            // 0.25 0.1 0.05 0.01
+            int[] charges = new int[4]
+            {
+                25, 10, 5, 1
+            };
+
+            for(int i = 0; i < costs.Length; i++)
+            {
+                int cost = costs[i];
+                for(int j = 0; j < charges.Length; j++)
+                {
+                    int charge = charges[j];
+                    Console.Write(cost / charge);
+                    cost = cost % charge;
+                    if(j < charges.Length - 1)
+                    {
+                        Console.Write(" ");
+                    }
+                }
+                Console.WriteLine();
+            }
+        }
+    }
+}
