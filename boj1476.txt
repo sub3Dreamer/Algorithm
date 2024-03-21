@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace BruteForce
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] input = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+
+            // 15, 28, 19
+            // 1 16 16 -> 16
+
+	// BFS
+            Queue<(int E, int S, int M)> queue = new Queue<(int E, int S, int M)>();
+            queue.Enqueue((1, 1, 1));
+
+            int year = 1;
+            while(queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+
+                if(current.E == input[0] && current.S == input[1] && current.M == input[2])
+                {
+                    break;
+                }
+                else
+                {
+                    year++;
+                    queue.Enqueue((current.E + 1 > 15 ? 1 : current.E + 1, current.S + 1 > 28 ? 1 : current.S + 1, current.M + 1 > 19 ? 1 : current.M + 1));
+                }
+            }
+
+            Console.WriteLine(year);
+        }
+    }
+}
