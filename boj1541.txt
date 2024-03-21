@@ -1,0 +1,51 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Greedy
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            // 30-70-20+40-10+100+30-35
+            // 키포인트 : 덧셈 부분을 먼저 더해준다.
+            // 30-70-(20+40)-(10+100+30)-35
+
+            string input = Console.ReadLine();
+
+            var elem1 = input.Split('-');
+
+            List<int> elemList = new List<int>();
+            for(int i = 0; i < elem1.Length; i++)
+            {
+                if (string.IsNullOrEmpty(elem1[i]))
+                    continue;
+                int sum = 0;
+                var elem2 = elem1[i].Split('+');
+                for(int j = 0; j < elem2.Length; j++)
+                {
+                    sum += int.Parse(elem2[j]);
+                }
+                elemList.Add(sum);
+            }
+
+            int result = 0;
+            if (input[0] == '-')
+            {
+                result = -elemList[0];
+            }
+            else
+            {
+                result = elemList[0];
+            }
+
+            for(int i = 1; i < elemList.Count; i++)
+            {
+                result -= elemList[i];
+            }
+
+            Console.WriteLine(result);
+        }
+    }
+}
