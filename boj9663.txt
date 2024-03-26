@@ -1,0 +1,77 @@
+using System;
+using System.Linq;
+
+namespace BackTracking
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            var num = int.Parse(Console.ReadLine());
+
+            int[,] map = new int[num, num];
+
+            int result = 0;
+
+            BackTracking(0, num, map, ref result);
+            Console.WriteLine(result);
+        }
+
+        public static void BackTracking(int row, int num, int[,] map, ref int result)
+        {
+            // 탈출 조건
+            if(row == num)
+            {
+                result++;
+                return;
+            }
+
+            for(int i = 0; i < num; i++)
+            {
+                if (map[row, i] == 0)
+                {
+                    var tempMap = Blocking(row, i, num, map);
+                    BackTracking(row + 1, num, tempMap, ref result);
+                }
+            }
+        }
+
+        public static int[,] Blocking(int row, int col, int num, int[,] map)
+        {
+            int[,] tempMap = (int[,])map.Clone();
+
+            int[] dr = new int[3] { 1, 1, 1 };
+            int[] dc = new int[3] { -1, 0, 1 };
+
+            // 같은 행에 있는 다른 자리 Block 처리
+            for (int i = 0; i < num; i++)
+            {
+                if (i != col)
+                {
+                    tempMap[row, i] = -1;
+                }
+            }
+
+            // 같은 열, 대각선 Block 처리
+            for (int i = 0; i < 3; i++)
+            {
+                int nr = row + dr[i];
+                int nc = col + dc[i];
+
+                while (true)
+                {
+                    if (nr < 0 || nr >= num || nc < 0 || nc >= num)
+                    {
+                        break;
+                    }
+
+                    tempMap[nr, nc] = -1;
+                    nr += dr[i];
+                    nc += dc[i];
+                }
+            }
+
+            return tempMap;
+        }
+    }
+}
