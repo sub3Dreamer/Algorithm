@@ -1,0 +1,45 @@
+using System;
+using System.Collections.Generic;
+
+namespace DP
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            var cnt = int.Parse(Console.ReadLine());
+
+            List<int> nums = new List<int>();
+            for (int i = 0; i < cnt; i++)
+            {
+                nums.Add(int.Parse(Console.ReadLine()));
+            }
+
+            for (int i = 0; i < nums.Count; i++)
+            {
+                var result = Fibonacci(nums[i]);
+                Console.WriteLine($"{result.Item2} {result.Item3}");
+            }
+        }
+
+        public static (int, int, int)[] fibo = new (int,int,int)[100];
+        public static (int, int, int) Fibonacci(int n)
+        {
+            if (fibo[n].Item1 != 0)
+            {
+                return fibo[n];
+            }
+
+            if (n == 0)
+            {
+                return fibo[0] = (0, 1, 0);
+            }
+            if (n == 1)
+            {
+                return fibo[1] = (1, 0, 1);
+            }
+            
+            return fibo[n] = (Fibonacci(n - 1).Item1 + Fibonacci(n - 2).Item1, Fibonacci(n - 1).Item2 + Fibonacci(n - 2).Item2, Fibonacci(n - 1).Item3 + Fibonacci(n - 2).Item3);
+        }
+    }
+}
