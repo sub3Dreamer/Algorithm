@@ -1,0 +1,38 @@
+using System;
+using System.Collections.Generic;
+
+public class Solution {
+    public int solution(int n, int[,] computers) {
+        int answer = 0;
+        
+        bool[] visited = new bool[n];
+        
+        for(int i = 0; i < n; i++)
+        {
+            if(visited[i] == false)
+            {
+                visited[i] = true;
+                answer++;
+                
+                Queue<int> queue = new Queue<int>();
+                queue.Enqueue(i);
+
+                while(queue.Count > 0)
+                {
+                    var num = queue.Dequeue();
+
+                    for(int j = 0; j < n; j++)
+                    {
+                        if(visited[j] == false && computers[num, j] == 1)
+                        {
+                            queue.Enqueue(j);
+                            visited[j] = true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return answer;
+    }
+}
