@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace BackTracking
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] inputs = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+
+            int N = inputs[0];
+            int M = inputs[1];
+            
+            for(int i = 1; i <= N; i++)
+            {
+                List<int> resList = new List<int>();
+                BackTracking(i, 1, N, M, resList);
+            }
+        }
+
+        public static void BackTracking(int num, int depth, int N, int M, List<int> resList)
+        {
+            List<int> modifyList = resList.ToList();
+            modifyList.Add(num);
+
+            if (depth == M)
+            {
+                for(int i = 0; i < modifyList.Count; i++)
+                {
+                    Console.Write($"{modifyList[i]} ");
+                }
+                Console.WriteLine();
+                return;
+            }
+
+            for(int i = num; i <= N; i++)
+            {
+                BackTracking(i, depth + 1, N, M, modifyList);
+            }
+        }
+    }
+}
