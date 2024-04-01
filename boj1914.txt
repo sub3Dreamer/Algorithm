@@ -1,0 +1,53 @@
+using System;
+using System.Text;
+using System.Numerics;
+
+namespace Recursion
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int N = int.Parse(Console.ReadLine());
+
+            // 예상외로 복병인듯.. 2의 100제곱이 int와 long의 MaxValue를 초과하는 문제때문에 BigInteger사용.
+            BigInteger cnt = BigInteger.Pow(2, N) - 1;
+            Console.WriteLine(cnt.ToString());
+
+            if (N <= 20)
+            {
+                // 문제의 제한시간이 6초이기 때문에 N이 20가까이 됐을때 재귀함수에서 매번 Console.WriteLine()을 찍으면 시간초과가 남.
+                // StringBuilder에 추가해서 한번에 출력하니까 시간초과 해결됨.
+                StringBuilder sb = new StringBuilder();
+                Hanoi(N, 1, 2, 3, sb);
+                Console.WriteLine(sb.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 하노이의 탑 
+        /// </summary>
+        /// <param name="N"> 탑의 층수 </param>
+        /// <param name="from"> 시작 기둥 번호 </param>
+        /// <param name="via"> 경유 기둥 번호 </param>
+        /// <param name="to"> 도착 기둥 번호 </param>
+        public static void Hanoi(int N, int from, int via, int to, StringBuilder sb)
+        {
+            if(N == 1)
+            {
+                //Console.WriteLine($"{from} {to}");
+                sb.Append($"{from} {to}");
+                sb.AppendLine();
+            }
+            else
+            {
+                // 점화식 세울때 N=2 일때 케이스 그려서 그걸 공식으로 옮기면 됨)
+                Hanoi(N - 1, from, to, via, sb);
+                //Console.WriteLine($"{from} {to}");
+                sb.Append($"{from} {to}");
+                sb.AppendLine();
+                Hanoi(N - 1, via, from, to, sb);
+            }
+        }
+    }
+}
