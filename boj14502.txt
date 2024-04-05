@@ -1,0 +1,117 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace BFS
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            var input1 = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+
+            int row = input1[0];
+            int col = input1[1];
+
+            int[,] map = new int[row, col];
+            List<(int, int)> virus = new List<(int, int)> ();
+            for(int i = 0; i < row; i++)
+            {
+                var inputMap = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+                for(int j = 0; j < col; j++)
+                {
+                    map[i, j] = inputMap[j];
+                    if (inputMap[j] == 2)
+                    {
+                        virus.Add((i, j));
+                    }
+                }
+            }
+
+            int result = 0;
+            DFS(0, map, virus, ref result);
+            Console.WriteLine(result);
+        }
+
+        static void DFS(int wallCnt, int[,] map, List<(int, int)> virus, ref int result)
+        {
+            if(wallCnt == 3)
+            {
+                int[,] tempMap = (int[,])map.Clone();
+                bool[,] visited = new bool[map.GetLength(0), map.GetLength(1)];
+                for (int i = 0; i < virus.Count; i++)
+                {
+                    BFS(virus[i], tempMap, visited, ref result);
+                }
+
+                int safeZoneCnt = 0;
+                for (int i = 0; i < tempMap.GetLength(0); i++)
+                {
+                    for (int j = 0; j < tempMap.GetLength(1); j++)
+                    {
+                        if (tempMap[i, j] == 0)
+                        {
+                            safeZoneCnt++;
+                        }
+                    }
+                }
+
+                if (safeZoneCnt > result)
+                {
+                    result = safeZoneCnt;
+                }
+                return;
+            }
+
+            for(int i = 0; i < map.GetLength(0); i++)
+            {
+                for(int j = 0; j < map.GetLength(1); j++)
+                {
+                    if (map[i, j] == 0)
+                    {
+                        map[i, j] = 1;
+                        DFS(wallCnt + 1, map, virus, ref result);
+                        map[i, j] = 0;  // 이 로직이 핵심인듯.
+                    }
+                }
+            }
+        }
+
+        static int[] dr = new int[4] { 1, -1, 0, 0 };
+        static int[] dc = new int[4] { 0, 0, 1, -1 };
+
+        static void BFS((int, int) startPos, int[,] map, bool[,] visited, ref int result)
+        {
+            Queue<(int, int)> queue = new Queue<(int, int)>();
+            queue.Enqueue(startPos);
+
+            while(queue.Count > 0)
+            {
+                var pos = queue.Dequeue();
+                var row = pos.Item1;
+                var col = pos.Item2;
+
+                visited[row, col] = true;
+
+                for(int i = 0; i < 4; i++)
+                {
+                    var next_row = row + dr[i];
+                    var next_col = col + dc[i];
+
+                    // 영역 밖으로 나감
+                    if (next_row < 0 || next_row >= map.GetLength(0) || next_col < 0 || next_col >= map.GetLength(1))
+                        continue;
+
+                    if (map[next_row, next_col] != 0)
+                        continue;
+
+                    if (visited[next_row, next_col] == true)
+                        continue;
+
+                    map[next_row, next_col] = 2;
+                    queue.Enqueue((next_row, next_col));
+                }
+            }
+        }
+    }
+}
