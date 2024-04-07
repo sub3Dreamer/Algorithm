@@ -1,0 +1,114 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace BFS
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            var input1 = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+
+            int row = input1[0];
+            int col = input1[1];
+            int squareCnt = input1[2];
+
+            int[,] map = new int[row, col];
+            for(int i = 0; i < squareCnt; i++) 
+            {
+                var info = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+
+                (int, int) vert1 = (row - info[1], info[0]);
+                (int, int) vert2 = (row - info[3], info[2]);
+
+                for(int j = vert2.Item1; j < vert1.Item1; j++)
+                {
+                    for(int k = vert1.Item2; k < vert2.Item2; k++)
+                    {
+                        map[j, k] = 1;
+                    }
+                }
+            }
+
+            bool[,] visited = new bool[row, col];
+
+            List<int> division = new List<int>();
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    if (visited[i, j] == false && map[i, j] == 0)
+                    {
+                        //Console.WriteLine("BFS Start--------");
+                        int cnt = BFS((i, j), map, visited);
+                        division.Add(cnt);
+                        //Console.WriteLine("BFS End--------");
+                    }
+                }
+            }
+
+            //for(int i = 0; i < map.GetLength(0); i++)
+            //{
+            //    for(int j = 0; j < map.GetLength(1); j++)
+            //    {
+            //        Console.Write($"{map[i,j]} ");
+            //    }
+            //    Console.WriteLine();
+            //}
+
+            division.Sort();
+
+            Console.WriteLine(division.Count);
+            for (int i = 0; i < division.Count; i++)
+            {
+                Console.Write($"{division[i]} ");
+            }
+        }
+
+        static int[] dr = new int[4] { 1, -1, 0, 0 };
+        static int[] dc = new int[4] { 0, 0, 1, -1 };
+
+        public static int BFS((int, int) pos, int[,] map, bool[,] visited)
+        {
+            int cnt = 0;
+            Queue<(int, int)> queue = new Queue<(int, int)>();
+            queue.Enqueue((pos.Item1, pos.Item2));
+            visited[pos.Item1, pos.Item2] = true;
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                int current_row = current.Item1;
+                int current_col = current.Item2;
+
+                if (map[current_row, current_col] == 0)
+                {
+                    //Console.WriteLine($"{current_row} {current_col}");
+                    cnt++;
+                }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    int next_row = current_row + dr[i];
+                    int next_col = current_col + dc[i];
+
+                    if (next_row < 0 || next_row >= map.GetLength(0) || next_col < 0 || next_col >= map.GetLength(1))
+                        continue;
+
+                    if (visited[next_row, next_col])
+                        continue;
+
+                    if (map[next_row, next_col] == 1)
+                        continue;
+
+                    visited[next_row, next_col] = true;
+                    queue.Enqueue((next_row, next_col));
+                }
+            }
+
+            return cnt;
+        }
+    }
+}
