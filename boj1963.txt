@@ -1,0 +1,83 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace BFS
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int cnt = int.Parse(Console.ReadLine());
+
+            List<(int, int)> primeNumbers = new List<(int, int)>();
+            for (int i = 0; i < cnt; i++)
+            {
+                int[] arr = Console.ReadLine().Split(' ').Select(int.Parse).ToArray();
+                primeNumbers.Add((arr[0], arr[1]));
+            }
+
+            // 에라토스테네스의 체 알고리즘
+            bool[] isPrime = Enumerable.Repeat(true, 10000).ToArray();
+            for (int i = 2; i < 10000; i++)
+            {
+                if (isPrime[i])
+                {
+                    for (int j = i * i; j < 10000; j += i)
+                    {
+                        isPrime[j] = false;
+                    }
+                }
+            }
+
+            for (int i = 0; i < primeNumbers.Count; i++)
+            {
+                int res = BFS(primeNumbers[i].Item1, primeNumbers[i].Item2, isPrime);
+                Console.WriteLine(res);
+            }
+        }
+
+        static int BFS(int start, int end, bool[] isPrime)
+        {
+            Queue<int> queue = new Queue<int>();
+            queue.Enqueue(start);
+            bool[] visited = new bool[10000];
+            int[] count = new int[10000];
+            visited[start] = true;
+
+            while(queue.Count > 0) 
+            {
+                var current = queue.Dequeue();
+
+                for(int i = 0; i < 4; i++)
+                {
+                    for(int j = 0; j <= 9; j++)
+                    {
+                        // 1000의 자리수가 0이면 패스
+                        if (i == 0 && j == 0)
+                            continue;
+
+                        int next = GetChangeNum(current, i, j);     // i번째 자리수를 j의 수로 바꾼다.
+                        if (isPrime[next] && visited[next] == false)
+                        {
+                            queue.Enqueue(next);
+                            visited[next] = true;
+                            count[next] = count[current] + 1;
+                        }
+                    }
+                }
+            }
+
+            return count[end];
+        }
+
+        static int GetChangeNum(int num, int i, int j)
+        {
+            StringBuilder sb = new StringBuilder(num.ToString());
+            sb[i] = (char)(j + '0');        // '0' 추가 안해주면 \t가 딸려붙어서 원하는 결과값으로 치환이 안됨
+            return int.Parse(sb.ToString());
+        }
+    }
+}
