@@ -1,0 +1,70 @@
+using System;
+
+namespace Greedy
+{
+    internal class Program
+    {
+        // 2839 설탕 배달
+        static void Main(string[] args)
+        {
+            int result = -1;
+            int N = int.Parse(Console.ReadLine());
+
+            //DFS(0, N, ref result);        // DFS는 시간초과로 실패.
+
+            for(int i = N / 5; i >= 0; i--)
+            {
+                int remain = N - (5 * i);
+                if(remain == 0)
+                {
+                    if (result == -1 || result > i)
+                    {
+                        result = i;
+                    }
+                }
+
+                if(remain >= 3)
+                {
+                    for(int j = remain / 3; j >= 0; j--)
+                    {
+                        int remain2 = remain - (3 * j);
+                        if(remain2 == 0)
+                        {
+                            if(result == -1 || result > i + j)
+                            {
+                                result = i + j;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Console.WriteLine(result);
+        }
+
+        //static void DFS(int cnt, int remain, ref int result)
+        //{
+        //    if(remain == 0)
+        //    {
+        //        if(result == -1)
+        //        {
+        //            result = cnt;
+        //        }
+        //        else if(result > cnt)
+        //        {
+        //            result = cnt;
+        //        }
+        //    }
+
+        //    if(remain - 3 >= 0)
+        //    {
+        //        DFS(cnt + 1, remain - 3, ref result);
+        //    }
+
+        //    if(remain - 5 >= 0)
+        //    {
+        //        DFS(cnt + 1, remain - 5, ref result);
+        //    }
+        //}
+    }
+}
