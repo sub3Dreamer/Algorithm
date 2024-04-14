@@ -1,0 +1,35 @@
+using System;
+using System.Collections.Generic;
+
+namespace Greedy
+{
+    internal class Program
+    {
+        // 2217 로프
+        static void Main(string[] args)
+        {
+            int result = -1;
+            int N = int.Parse(Console.ReadLine());
+
+            List<int> ropes = new List<int>();
+            for(int i = 0; i < N; i++)
+            {
+                int rope = int.Parse(Console.ReadLine());
+                ropes.Add(rope);
+            }
+
+            ropes.Sort();
+
+            for(int i = ropes.Count; i >= 1; i--)
+            {
+                int weight = i * ropes[ropes.Count - i];
+                if(result == -1 || result < weight)
+                {
+                    result = weight;
+                }
+            }
+
+            Console.WriteLine(result);
+        }
+    }
+}
