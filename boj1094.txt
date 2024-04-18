@@ -1,0 +1,33 @@
+using System;
+
+namespace AlgorithmCSharp
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int X = int.Parse(Console.ReadLine());
+
+            int pipe = 64;
+
+            int remain = X;
+            int pipeCnt = 0;
+            for(int i = 0; i <= 6; i++)
+            {
+                int current = pipe >> i;
+                if(remain >= current)
+                {
+                    pipeCnt += remain / current;
+                    remain %= current;
+                }
+
+                if(remain == 0)
+                {
+                    break;
+                }
+            }
+
+            Console.WriteLine(pipeCnt);
+        }
+    }
+}
