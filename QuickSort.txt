@@ -1,0 +1,86 @@
+using System;
+using System.Text;
+
+namespace AlgorithmCSharp
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] arrs = new int[10] { 4, 1, 9, 6, 5, 2, 3, 7, 8, 10 };
+            QuickSort(arrs, 0, arrs.Length - 1);
+
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < arrs.Length; i++)
+            {
+                sb.Append(arrs[i]);
+                if (i < arrs.Length - 1)
+                    sb.Append(",");
+            }
+
+            Console.WriteLine(sb.ToString());
+        }
+
+        static void QuickSort(int[] arrs, int start, int end)
+        {
+            // 탈출조건. start가 end보다 크면 현재 블록 내에서 정렬이 끝난것으로 간주
+            if (start >= end)
+                return;
+
+            // 피봇 맨앞, 피봇 다음꺼랑 맨 뒤 인덱스랑 루프돌면서 피봇보다 큰애랑 작은애 스왑
+            int pivot = start;
+            int i = start + 1;
+            int j = end;
+            int temp;
+
+            while(i <= j)
+            {
+                // 피봇보다 큰 값을 찾을때까지 우로 시프트
+                while (arrs[i] <= arrs[pivot])
+                {
+                    i++;
+                }
+
+                // 피봇보다 작은 값을 찾을때까지 좌로 시프트
+                while (arrs[j] >= arrs[pivot] && j > start)
+                {
+                    j--;
+                }
+
+                if(i > j)
+                {
+                    // i가 j보다 크면 요소 정렬이 끝난것이므로 pivot과 j를 스왑
+                    temp = arrs[pivot];
+                    arrs[pivot] = arrs[j];
+                    arrs[j] = temp;
+                }
+                else
+                {
+                    // i랑 j요소를 쉬프트
+                    temp = arrs[i];
+                    arrs[i] = arrs[j];
+                    arrs[j] = temp;
+                }
+
+                //Print(arrs, start, end);
+            }
+
+            // 바뀐 피봇기준 앞뒤로 재귀(분할 정복). j가 신규 피봇이 된다.
+            QuickSort(arrs, start, j - 1);
+            QuickSort(arrs, j + 1, end);
+        }
+
+        // 디버깅용 로그
+        static void Print(int[] arrs, int start, int end)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < arrs.Length; i++)
+            {
+                sb.Append(arrs[i]);
+                if (i < arrs.Length - 1)
+                    sb.Append(",");
+            }
+            Console.WriteLine($"Print : {sb.ToString()}, start = {start}, end = {end}");
+        }
+    }
+}
